@@ -1,0 +1,103 @@
+{
+  "name": "openclaw-aws-personal",
+  "version": "1.0.0",
+  "description": "Cost-optimized OpenClaw deployment on AWS EC2 with automated scheduling and manual controls",
+  "main": "openclaw-personal.yaml",
+  "scripts": {
+    "deploy": "bash deploy.sh",
+    "deploy:windows": "powershell -ExecutionPolicy Bypass -File deploy.ps1",
+    "uninstall": "bash uninstall.sh",
+    "health-check": "bash scripts/health-check.sh",
+    "setup": "bash setup.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOUR_USERNAME/openclaw-aws-personal.git"
+  },
+  "keywords": [
+    "openclaw",
+    "aws",
+    "ec2",
+    "anthropic",
+    "claude",
+    "ai-assistant",
+    "cost-optimization",
+    "automation",
+    "cloudformation",
+    "lambda",
+    "personal",
+    "self-hosted"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/openclaw-aws-personal/issues"
+  },
+  "homepage": "https://github.com/YOUR_USERNAME/openclaw-aws-personal#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "preferGlobal": false,
+  "private": false,
+  "config": {
+    "default_region": "us-east-1",
+    "default_instance_type": "t4g.medium",
+    "default_schedule_start": "cron(0 13 ? * MON-FRI *)",
+    "default_schedule_stop": "cron(0 1 ? * TUE-SAT *)"
+  },
+  "openclaw": {
+    "version": "personal-1.0.0",
+    "base_template": "sample-OpenClaw-on-AWS-with-Bedrock",
+    "features": [
+      "cost-optimization",
+      "automated-scheduling",
+      "manual-controls",
+      "graviton-arm-instances",
+      "spot-instance-support",
+      "web-interface",
+      "anthropic-api-direct"
+    ],
+    "monthly_cost": {
+      "baseline": "$15.50",
+      "range": "$7-25",
+      "savings_vs_original": "$35-40"
+    },
+    "supported_regions": [
+      "us-east-1",
+      "us-west-2",
+      "eu-west-1",
+      "ap-northeast-1"
+    ],
+    "requirements": {
+      "aws_cli": ">=2.0.0",
+      "ssm_plugin": ">=1.2.0",
+      "anthropic_api_key": "required"
+    }
+  },
+  "directories": {
+    "doc": "./docs",
+    "lib": "./scripts",
+    "test": "./tests"
+  },
+  "files": [
+    "README.md",
+    "QUICKSTART.md",
+    "CHANGELOG.md",
+    "COST_OPTIMIZATION.md",
+    "TROUBLESHOOTING.md",
+    "openclaw-personal.yaml",
+    "deploy.sh",
+    "deploy.ps1",
+    "uninstall.sh",
+    "setup.sh",
+    "web/",
+    "scripts/"
+  ]
+}

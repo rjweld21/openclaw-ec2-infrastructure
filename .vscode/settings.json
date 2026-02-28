@@ -1,0 +1,51 @@
+{
+    // OpenClaw Personal Edition - Workspace Settings
+    
+    // Markdown files open in preview mode by default
+    "workbench.editorAssociations": {
+        "*.md": "vscode.markdown.preview.editor"
+    },
+    
+    // Markdown preview settings optimized for documentation
+    "markdown.preview.openMarkdownLinks": "inEditor",
+    "markdown.preview.scrollPreviewWithEditor": true,
+    "markdown.preview.scrollEditorWithPreview": true,
+    "markdown.preview.markEditorSelection": true,
+    "markdown.preview.doubleClickToSwitchToEditor": false,
+    
+    // File explorer settings
+    "files.exclude": {
+        "**/deployment-info.txt": true,
+        "**/uninstall-log.txt": true,
+        "**/support-bundle.txt": true,
+        "**/*.tmp": true,
+        "**/*.bak": true
+    },
+    
+    // Auto-save for documentation editing
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 2000,
+    
+    // Word wrap for markdown files
+    "[markdown]": {
+        "editor.wordWrap": "on",
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": false,
+            "strings": false
+        }
+    },
+    
+    // PowerShell settings for deployment scripts
+    "[powershell]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    
+    // YAML settings for CloudFormation template
+    "[yaml]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.detectIndentation": false
+    }
+}

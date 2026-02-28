@@ -1,0 +1,24 @@
+{
+    "recommendations": [
+        // Markdown support
+        "yzhang.markdown-all-in-one",
+        "davidanson.vscode-markdownlint",
+        
+        // AWS CloudFormation support
+        "aws-toolkits.aws-toolkit-vscode",
+        "kddejong.vscode-cfn-lint",
+        
+        // PowerShell support
+        "ms-vscode.powershell",
+        
+        // YAML support
+        "redhat.vscode-yaml",
+        
+        // Git support
+        "donjayamanne.githistory",
+        
+        // General productivity
+        "ms-vscode.vscode-json",
+        "alefragnani.bookmarks"
+    ]
+}

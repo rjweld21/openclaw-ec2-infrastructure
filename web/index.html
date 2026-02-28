@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw Control Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            min-width: 400px;
+            max-width: 500px;
+        }
+        
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        
+        .status-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .status-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .status-value {
+            font-size: 18px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            display: inline-block;
+            min-width: 120px;
+        }
+        
+        .status-running {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-stopped {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status-loading {
+            background: #e2e3e5;
+            color: #6c757d;
+            border: 1px solid #d6d8db;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .btn-start {
+            background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+            color: white;
+            box-shadow: 0 4px 15px rgba(86, 171, 47, 0.3);
+        }
+        
+        .btn-start:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(86, 171, 47, 0.4);
+        }
+        
+        .btn-stop {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        .btn-stop:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+        
+        .btn-refresh {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            padding: 12px 24px;
+            font-size: 14px;
+            min-width: auto;
+        }
+        
+        .btn-refresh:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .instance-info {
+            background: #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 12px;
+            color: #6c757d;
+            font-family: monospace;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                margin: 20px;
+                padding: 30px 20px;
+                min-width: unset;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🦞</div>
+        <h1 class="title">OpenClaw</h1>
+        <p class="subtitle">Personal Cloud Assistant</p>
+        
+        <div class="status-section">
+            <div class="status-label">Status</div>
+            <div id="status" class="status-value status-loading">Loading...</div>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="controls">
+            <button id="startBtn" class="btn btn-start" disabled>
+                <span class="btn-text">🚀 Start</span>
+            </button>
+            <button id="stopBtn" class="btn btn-stop" disabled>
+                <span class="btn-text">⏹️ Stop</span>
+            </button>
+        </div>
+        
+        <button id="refreshBtn" class="btn btn-refresh">
+            <span class="btn-text">🔄 Refresh</span>
+        </button>
+        
+        <div id="instanceInfo" class="instance-info" style="display: none;">
+            <div class="info-item">
+                <span>Instance:</span>
+                <span id="instanceId">-</span>
+            </div>
+            <div class="info-item">
+                <span>Public DNS:</span>
+                <span id="publicDns">-</span>
+            </div>
+            <div class="info-item">
+                <span>Last Update:</span>
+                <span id="lastUpdate">-</span>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>OpenClaw Personal Edition</p>
+            <p><a href="https://github.com/openclaw/openclaw" target="_blank">Documentation</a> • 
+               <a href="#" onclick="showInstanceInfo()">Instance Info</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - Replace these URLs with your actual Lambda Function URLs
+        // These will be populated by CloudFormation outputs or deployment script
+        const API_CONFIG = {
+            startUrl: 'REPLACE_WITH_START_FUNCTION_URL',
+            stopUrl: 'REPLACE_WITH_STOP_FUNCTION_URL',
+            statusUrl: 'REPLACE_WITH_STATUS_FUNCTION_URL'
+        };
+        
+        // Check if we're running with placeholder URLs
+        const isConfigured = !Object.values(API_CONFIG).some(url => url.startsWith('REPLACE_WITH_'));
+        
+        // DOM elements
+        const statusEl = document.getElementById('status');
+        const messageEl = document.getElementById('message');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const instanceInfoEl = document.getElementById('instanceInfo');
+        const instanceIdEl = document.getElementById('instanceId');
+        const publicDnsEl = document.getElementById('publicDns');
+        const lastUpdateEl = document.getElementById('lastUpdate');
+        
+        let currentState = 'unknown';
+        
+        // Show configuration warning if not set up
+        if (!isConfigured) {
+            showMessage('⚠️ Configuration needed: Replace API URLs in this HTML file', 'error');
+            statusEl.textContent = 'Not Configured';
+            statusEl.className = 'status-value status-loading';
+        }
+        
+        // Initialize
+        if (isConfigured) {
+            checkStatus();
+            setInterval(checkStatus, 30000); // Auto-refresh every 30 seconds
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', startInstance);
+        stopBtn.addEventListener('click', stopInstance);
+        refreshBtn.addEventListener('click', checkStatus);
+        
+        async function checkStatus() {
+            if (!isConfigured) return;
+            
+            try {
+                setLoading('refresh');
+                const response = await fetch(API_CONFIG.statusUrl);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    updateStatus(data);
+                    clearMessage();
+                } else {
+                    throw new Error(data.error || 'Failed to check status');
+                }
+            } catch (error) {
+                console.error('Status check failed:', error);
+                showMessage(`Failed to check status: ${error.message}`, 'error');
+                statusEl.textContent = 'Error';
+                statusEl.className = 'status-value status-loading';
+            } finally {
+                clearLoading('refresh');
+            }
+        }
+        
+        async function startInstance() {
+            try {
+                setLoading('start');
+                showMessage('Starting instance...', 'success');
+                
+                const response = await fetch(API_CONFIG.startUrl, { method: 'POST' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage(data.message, 'success');
+                    setTimeout(checkStatus, 5000); // Check status after 5 seconds
+                } else {
+                    throw new Error(data.error || 'Failed to start instance');
+                }
+            } catch (error) {
+                console.error('Start failed:', error);
+                showMessage(`Failed to start: ${error.message}`, 'error');
+            } finally {
+                setTimeout(() => clearLoading('start'), 2000);
+            }
+        }
+        
+        async function stopInstance() {
+            if (!confirm('Are you sure you want to stop the OpenClaw instance?')) {
+                return;
+            }
+            
+            try {
+                setLoading('stop');
+                showMessage('Stopping instance...', 'success');
+                
+                const response = await fetch(API_CONFIG.stopUrl, { method: 'POST' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage(data.message, 'success');
+                    setTimeout(checkStatus, 5000); // Check status after 5 seconds
+                } else {
+                    throw new Error(data.error || 'Failed to stop instance');
+                }
+            } catch (error) {
+                console.error('Stop failed:', error);
+                showMessage(`Failed to stop: ${error.message}`, 'error');
+            } finally {
+                setTimeout(() => clearLoading('stop'), 2000);
+            }
+        }
+        
+        function updateStatus(data) {
+            currentState = data.state;
+            
+            // Update status display
+            statusEl.textContent = capitalizeFirst(data.state);
+            statusEl.className = `status-value status-${getStatusClass(data.state)}`;
+            
+            // Update buttons
+            const isRunning = data.state === 'running';
+            const isStopped = data.state === 'stopped';
+            const isPending = data.state === 'pending' || data.state === 'stopping';
+            
+            startBtn.disabled = isRunning || isPending;
+            stopBtn.disabled = isStopped || isPending;
+            
+            // Update instance info
+            instanceIdEl.textContent = data.instanceId || '-';
+            publicDnsEl.textContent = data.publicDnsName || '-';
+            lastUpdateEl.textContent = new Date().toLocaleTimeString();
+            
+            // Show additional info for running instances
+            if (isRunning && data.avgCpuLast30Min !== undefined) {
+                showMessage(`Instance is running (CPU: ${data.avgCpuLast30Min}% avg last 30min)`, 'success');
+            }
+        }
+        
+        function getStatusClass(state) {
+            switch (state) {
+                case 'running': return 'running';
+                case 'stopped': return 'stopped';
+                case 'pending':
+                case 'stopping':
+                case 'starting': return 'pending';
+                default: return 'loading';
+            }
+        }
+        
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        
+        function setLoading(button) {
+            const btn = button === 'start' ? startBtn : 
+                        button === 'stop' ? stopBtn : refreshBtn;
+            const textEl = btn.querySelector('.btn-text');
+            
+            btn.disabled = true;
+            textEl.innerHTML = '<div class="loading-spinner"></div>' + textEl.textContent;
+        }
+        
+        function clearLoading(button) {
+            const btn = button === 'start' ? startBtn : 
+                        button === 'stop' ? stopBtn : refreshBtn;
+            const textEl = btn.querySelector('.btn-text');
+            
+            // Remove spinner
+            const spinner = textEl.querySelector('.loading-spinner');
+            if (spinner) {
+                spinner.remove();
+            }
+            
+            // Re-enable button based on current state
+            if (button === 'refresh') {
+                btn.disabled = false;
+            } else {
+                // This will be properly set by updateStatus
+                setTimeout(checkStatus, 1000);
+            }
+        }
+        
+        function showMessage(text, type) {
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(clearMessage, 5000);
+            }
+        }
+        
+        function clearMessage() {
+            messageEl.className = 'message';
+        }
+        
+        function showInstanceInfo() {
+            instanceInfoEl.style.display = 
+                instanceInfoEl.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 's':
+                        e.preventDefault();
+                        if (!startBtn.disabled) startInstance();
+                        break;
+                    case 'x':
+                        e.preventDefault();
+                        if (!stopBtn.disabled) stopInstance();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        checkStatus();
+                        break;
+                }
+            }
+        });
+        
+        // Show keyboard shortcuts on hover
+        startBtn.title = 'Start instance (Ctrl+S)';
+        stopBtn.title = 'Stop instance (Ctrl+X)';
+        refreshBtn.title = 'Refresh status (Ctrl+R)';
+    </script>
+</body>
+</html>

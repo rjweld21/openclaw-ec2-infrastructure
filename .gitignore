@@ -1,0 +1,50 @@
+# Deployment artifacts
+deployment-info.txt
+uninstall-log.txt
+
+# Temporary files
+web/index.html.tmp*
+
+# AWS credentials and keys
+.aws/
+*.pem
+*.key
+
+# API keys and secrets
+.env
+*.env
+config.json
+
+# Logs
+*.log
+logs/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Editor files (keep .vscode/extensions.json but ignore user settings)
+.vscode/launch.json
+.vscode/tasks.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Backup files
+*.bak
+*.backup
+*.tar.gz
+
+# Node modules (if we add any)
+node_modules/
+
+# CloudFormation outputs
+outputs.json
+
+# Health check reports
+support-bundle.txt
+health-report.txt
